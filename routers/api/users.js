@@ -3,8 +3,10 @@ const express = require('express')
 const router = express.Router();
 const bcrypt = require('bcrypt');   // 该模块能对密码进行加密
 const gravatar = require('gravatar.js');  // 该模块是头像处理模块
+const jwt = require('jsonwebtoken'); // 该模块用于产生token
 
 const User = require('../../models/User');
+const keys = require('../../config/keys');
 
 // $route GET /api/users/test
 // @desc 返回请求的json数据
@@ -72,7 +74,20 @@ router.post('/login', (req, res) => {
             bcrypt.compare(password, user.password)
                 .then((isMath) => {
                     if (isMath) {
-                        res.json({ msg: 'success' })
+
+                        // ---------------
+                        // jwt.sign("规则", "加密名字", "过期时间,一个对象，时间是秒为单位,3600秒就是一个小时", "（箭头）函数,第一个参数为err信息，第二个参数为生成的token");
+                        const rule = { id: user.id, name: user.name };
+                        jwt.sign(rule, keys.secretOrKey, { expiresIn: 3600 }, (err, token) => {
+                            if (err) throw err;
+                            res.json({
+                                success: true,
+                                token: 'wxyzcctv' + token
+                            })
+                        });
+
+                        // res.json({ msg: 'success' })
+                        // ---------------
                     } else {
                         return res.status(400).json({ password: '密码错误' })
                     }
