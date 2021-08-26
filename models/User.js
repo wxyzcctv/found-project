@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 // 创建一个请求体的结构
 const UserSchema = new Schema({
+    // 请求体的构建中包括:姓名,邮箱.密码,头像,日期(默认为当前时刻)
     name: {
         type: String,
         require: true
