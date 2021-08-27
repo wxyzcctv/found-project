@@ -4,6 +4,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');   // 该模块能对密码进行加密
 const gravatar = require('gravatar.js');  // 该模块是头像处理模块
 const jwt = require('jsonwebtoken'); // 该模块用于产生token
+const passport = require("passport");
 
 const User = require('../../models/User');
 const keys = require('../../config/keys');
@@ -82,7 +83,7 @@ router.post('/login', (req, res) => {
                             if (err) throw err;
                             res.json({
                                 success: true,
-                                token: 'wxyzcctv' + token
+                                token: 'Bearer ' + token
                             })
                         });
 
@@ -93,6 +94,19 @@ router.post('/login', (req, res) => {
                     }
                 })
         })
+})
+
+// $route GET /api/users/current
+// @desc 返回current user
+// @access private
+
+// .get()有三个参数，它的第二个参数就是验证token的方法，使用passport和passport-jwt进行验证
+router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
+    res.json({
+        id: req.user.id,
+        name: req.user.name,
+        email: req.user.email
+    })
 })
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const passport = require('passport');
 const app = express();
 
 // 引入user.js
@@ -18,9 +19,14 @@ mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
-    res.send('Hello World!')
-})
+// 初始化passport
+app.use(passport.initialize());
+// 使用require的方式将passport传入到配置文件中，这样就在配置文件里面写passpost
+require('./config/passport')(passport);
+
+// app.get("/", (req, res) => {
+//     res.send('Hello World!')
+// })
 
 // 使用routes
 app.use("/api/users", user)
