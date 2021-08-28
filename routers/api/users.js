@@ -12,9 +12,9 @@ const keys = require('../../config/keys');
 // $route GET /api/users/test
 // @desc 返回请求的json数据
 // @access public
-router.get('/test', (req, res) => {
-    res.json({ msg: "login works" })
-})
+// router.get('/test', (req, res) => {
+//     res.json({ msg: "login works" })
+// })
 
 // $route POST /api/users/register
 // @desc 返回请求的json数据
@@ -27,7 +27,7 @@ router.post('/register', (req, res) => {
         .then((user) => {
             // 如果发现已经存在邮箱了就返回400错误，错误信息为邮箱已被注册
             if (user) {
-                return res.status(400).json({ email: '邮箱已被注册' })
+                return res.status(400).json('邮箱已被注册')
             } else {
                 // 如果数据库中没有发现所填写的邮箱就创建一个请求体
                 // 这个请求体中包括如下内容
@@ -40,6 +40,7 @@ router.post('/register', (req, res) => {
                     email: req.body.email,
                     avatar,
                     password: req.body.password,
+                    identity: req.body.identity
                 })
                 // 进行密码加密，使用方法主要看npm
                 bcrypt.genSalt(10, function (err, salt) {
@@ -69,16 +70,20 @@ router.post('/login', (req, res) => {
         .then((user) => {
             // 如果用户不存在就返回404状态码，并给出提示信息：邮箱不存在
             if (!user) {
-                return res.status(404).json({ email: '邮箱不存在' })
+                return res.status(404).json('邮箱不存在！')
             }
             // 密码匹配
             bcrypt.compare(password, user.password)
                 .then((isMath) => {
                     if (isMath) {
 
-                        // ---------------
                         // jwt.sign("规则", "加密名字", "过期时间,一个对象，时间是秒为单位,3600秒就是一个小时", "（箭头）函数,第一个参数为err信息，第二个参数为生成的token");
-                        const rule = { id: user.id, name: user.name };
+                        const rule = {
+                            id: user.id,
+                            name: user.name,
+                            avatar: user.avatar,
+                            identity: user.identity
+                        };
                         jwt.sign(rule, keys.secretOrKey, { expiresIn: 3600 }, (err, token) => {
                             if (err) throw err;
                             res.json({
@@ -86,11 +91,8 @@ router.post('/login', (req, res) => {
                                 token: 'Bearer ' + token
                             })
                         });
-
-                        // res.json({ msg: 'success' })
-                        // ---------------
                     } else {
-                        return res.status(400).json({ password: '密码错误' })
+                        return res.status(400).json('密码错误')
                     }
                 })
         })
@@ -105,7 +107,8 @@ router.get('/current', passport.authenticate('jwt', { session: false }), (req, r
     res.json({
         id: req.user.id,
         name: req.user.name,
-        email: req.user.email
+        email: req.user.email,
+        identity: req.user.identity
     })
 })
 
