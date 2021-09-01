@@ -10,44 +10,34 @@
 					label-width="80px"
 					class="registerForm"
 				>
-					<el-form-item label="姓名" prop="name">
-						<el-input
-							v-model="registerUser.name"
-							placeholder="请输入姓名"
-						></el-input>
-					</el-form-item>
-					<el-form-item label="邮箱" prop="email">
-						<el-input
-							v-model="registerUser.email"
-							placeholder="请输入邮箱"
-						></el-input>
-					</el-form-item>
-					<el-form-item label="密码" prop="password">
-						<el-input
-							type="password"
-							v-model="registerUser.password"
-						></el-input>
-					</el-form-item>
-					<el-form-item label="确认密码" prop="password2">
-						<el-input
-							type="password"
-							v-model="registerUser.password2"
-						></el-input>
-					</el-form-item>
-					<el-form-item label="选择身份" prop="identity">
-						<el-select
-							v-model="registerUser.identity"
-							placeholder="请选择"
+					<template>
+						<el-form-item
+							v-for="item in formList"
+							:label="item.label"
+							:prop="item.prop"
+							:key="item.prop"
 						>
-							<el-option
-								v-for="item in identityList"
-								:key="item.value"
-								:label="item.label"
-								:value="item.value"
+							<el-input
+								v-if="'input,password'.includes(item.type)"
+								:type="item.type"
+								v-model="registerUser[item.prop]"
+								:placeholder="item.placeholder"
+							></el-input>
+							<el-select
+								v-if="item.type === 'select'"
+								v-model="registerUser[item.prop]"
+								:placeholder="item.placeholder"
 							>
-							</el-option>
-						</el-select>
-					</el-form-item>
+								<el-option
+									v-for="each in identityList"
+									:key="each.value"
+									:label="each.label"
+									:value="each.value"
+								>
+								</el-option>
+							</el-select>
+						</el-form-item>
+					</template>
 					<el-form-item>
 						<el-button
 							type="primary"
@@ -75,6 +65,38 @@ export default {
 				password2: "",
 				identity: "",
 			},
+			formList: [
+				{
+					label: "姓名",
+					prop: "name",
+					placeholder: "请输入姓名",
+					type: "input",
+				},
+				{
+					label: "邮箱",
+					prop: "email",
+					placeholder: "请输入邮箱",
+					type: "input",
+				},
+				{
+					label: "密码",
+					prop: "password",
+					placeholder: "请输入密码",
+					type: "password",
+				},
+				{
+					label: "确认密码",
+					prop: "password2",
+					placeholder: "请确认密码",
+					type: "password",
+				},
+				{
+					label: "选择身份",
+					prop: "identity",
+					placeholder: "请输入姓名",
+					type: "select",
+				},
+			],
 			identityList: [
 				{
 					value: "manager",
@@ -85,8 +107,11 @@ export default {
 					label: "员工",
 				},
 			],
-			rules: [],
+			rules: {},
 		};
+	},
+	methods: {
+		submitForm() {},
 	},
 };
 </script>
