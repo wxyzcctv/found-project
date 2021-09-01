@@ -57,6 +57,13 @@ export default {
 	name: "register",
 	components: {},
 	data() {
+		var validatePass2 = (rule, value, callback) => {
+			if (value !== this.registerUser.password) {
+				callback(new Error("两次输入密码不一致!"));
+			} else {
+				callback();
+			}
+		};
 		return {
 			registerUser: {
 				name: "",
@@ -107,11 +114,69 @@ export default {
 					label: "员工",
 				},
 			],
-			rules: {},
+			rules: {
+				name: [
+					{
+						required: true,
+						message: "用户名不能为空",
+						trigger: "blur",
+					},
+					{
+						min: 2,
+						max: 30,
+						message: "长度在 2 到 30 个字符",
+						trigger: "blur",
+					},
+				],
+				email: [
+					{
+						type: "email",
+						required: true,
+						message: "邮箱格式不正确",
+						trigger: "blur",
+					},
+				],
+				password: [
+					{
+						required: true,
+						message: "密码不能为空",
+						trigger: "blur",
+					},
+					{
+						min: 6,
+						max: 30,
+						message: "长度在 6 到 30 个字符之间",
+						trigger: "blur",
+					},
+				],
+				password2: [
+					{
+						required: true,
+						message: "确认密码不能为空",
+						trigger: "blur",
+					},
+					{
+						min: 6,
+						max: 30,
+						message: "长度在 6 到 30 个字符之间",
+						trigger: "blur",
+					},
+					{ validator: validatePass2, trigger: "blur" },
+				],
+			},
 		};
 	},
 	methods: {
-		submitForm() {},
+		submitForm() {
+			this.$refs["registerForm"].validate((valid) => {
+				if (valid) {
+					alert("submit!");
+				} else {
+					console.log("error submit!!");
+					return false;
+				}
+			});
+		},
 	},
 };
 </script>
