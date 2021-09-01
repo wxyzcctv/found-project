@@ -170,10 +170,12 @@ export default {
 		submitForm() {
 			this.$refs["registerForm"].validate((valid) => {
 				if (valid) {
-					alert("submit!");
-				} else {
-					console.log("error submit!!");
-					return false;
+					this.$axios
+						.post("/api/users/register", this.registerUser)
+						.then((res) => {
+							this.$message.success("账号注册成功");
+						});
+					this.$router.push("/login");
 				}
 			});
 		},
