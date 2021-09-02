@@ -1,14 +1,14 @@
 <template>
-	<div class="register">
+	<div class="login">
 		<section class="form_container">
 			<div class="manage_tip">
 				<span class="title">资金在线后台管理系统</span>
 				<el-form
-					:model="registerUser"
+					:model="loginUser"
 					:rules="rules"
-					ref="registerForm"
+					ref="loginForm"
 					label-width="80px"
-					class="registerForm"
+					class="loginForm"
 				>
 					<template>
 						<el-form-item
@@ -20,32 +20,25 @@
 							<el-input
 								v-if="'input,password'.includes(item.type)"
 								:type="item.type"
-								v-model="registerUser[item.prop]"
+								v-model="loginUser[item.prop]"
 								:placeholder="item.placeholder"
 							></el-input>
-							<el-select
-								v-if="item.type === 'select'"
-								v-model="registerUser[item.prop]"
-								:placeholder="item.placeholder"
-							>
-								<el-option
-									v-for="each in identityList"
-									:key="each.value"
-									:label="each.label"
-									:value="each.value"
-								>
-								</el-option>
-							</el-select>
 						</el-form-item>
 					</template>
 					<el-form-item>
 						<el-button
 							type="primary"
 							class="submit_btn"
-							@click="submitForm('registerForm')"
-							>注册</el-button
-						>
+							@click="submitForm('loginForm')"
+							>登录
+						</el-button>
 					</el-form-item>
+					<div class="tiparea">
+						<p>
+							没有账号，请先
+							<router-link to="/register"> 注册 </router-link>
+						</p>
+					</div>
 				</el-form>
 			</div>
 		</section>
@@ -54,31 +47,15 @@
 
 <script>
 export default {
-	name: "register",
+	name: "login",
 	components: {},
 	data() {
-		var validatePass2 = (rule, value, callback) => {
-			if (value !== this.registerUser.password) {
-				callback(new Error("两次输入密码不一致!"));
-			} else {
-				callback();
-			}
-		};
 		return {
-			registerUser: {
-				name: "",
+			loginUser: {
 				email: "",
 				password: "",
-				password2: "",
-				identity: "",
 			},
 			formList: [
-				{
-					label: "用户名",
-					prop: "name",
-					placeholder: "请输入用户名",
-					type: "input",
-				},
 				{
 					label: "邮箱",
 					prop: "email",
@@ -91,43 +68,8 @@ export default {
 					placeholder: "请输入密码",
 					type: "password",
 				},
-				{
-					label: "确认密码",
-					prop: "password2",
-					placeholder: "请确认密码",
-					type: "password",
-				},
-				{
-					label: "选择身份",
-					prop: "identity",
-					placeholder: "请输入姓名",
-					type: "select",
-				},
-			],
-			identityList: [
-				{
-					value: "manager",
-					label: "管理员",
-				},
-				{
-					value: "employee",
-					label: "员工",
-				},
 			],
 			rules: {
-				name: [
-					{
-						required: true,
-						message: "用户名不能为空",
-						trigger: "blur",
-					},
-					{
-						min: 2,
-						max: 30,
-						message: "长度在 2 到 30 个字符",
-						trigger: "blur",
-					},
-				],
 				email: [
 					{
 						type: "email",
@@ -149,33 +91,22 @@ export default {
 						trigger: "blur",
 					},
 				],
-				password2: [
-					{
-						required: true,
-						message: "确认密码不能为空",
-						trigger: "blur",
-					},
-					{
-						min: 6,
-						max: 30,
-						message: "长度在 6 到 30 个字符之间",
-						trigger: "blur",
-					},
-					{ validator: validatePass2, trigger: "blur" },
-				],
 			},
 		};
 	},
 	methods: {
 		submitForm() {
-			this.$refs["registerForm"].validate((valid) => {
+			this.$refs["loginForm"].validate((valid) => {
 				if (valid) {
 					this.$axios
-						.post("/api/users/register", this.registerUser)
+						.post("/api/users/login", this.loginUser)
 						.then((res) => {
-							this.$message.success("账号注册成功");
+							const { token } = res.data;
+							// 存储到浏览器的localStorage
+							localStorage.setItem("userToken", token);
+							// 跳转到index路由中
+							this.$router.push("/index");
 						});
-					this.$router.push("/login");
 				}
 			});
 		},
@@ -184,7 +115,7 @@ export default {
 </script>
 
 <style lang="less">
-.register {
+.login {
 	position: relative;
 	width: 100%;
 	height: 100%;
@@ -207,15 +138,24 @@ export default {
 			font-size: 26px;
 			color: #fff;
 		}
-		.registerForm {
+		.loginForm {
 			margin-top: 20px;
 			background-color: #fff;
 			padding: 20px 40px 20px 20px;
 			border-radius: 5px;
 			box-shadow: 0 5px 10px #cccc;
-		}
-		.submit_btn {
-			width: 100%;
+
+			.submit_btn {
+				width: 100%;
+			}
+			.tiparea {
+				text-align: right;
+				font-size: 12px;
+				color: #333;
+				p a {
+					color: #409eff;
+				}
+			}
 		}
 	}
 }
