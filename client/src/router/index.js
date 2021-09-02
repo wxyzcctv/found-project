@@ -39,5 +39,15 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+// 路由守卫
+router.beforeEach((to, from, next) => {
+  const isLogin = localStorage.getItem('userToken') ? true : false;
+  // 如果跳转到登录和注册页面时不进行token的判断，跳转到其他界面时就判断token是否存在，此处主要校验的是用户是否登录了。
+  if (to.path === "/login" || to.path === "/register") {
+    next();
+  } else {
+    isLogin ? next() : next('/login')
+  }
+})
 
 export default router
