@@ -48,7 +48,9 @@ axios.interceptors.response.use(response => {
     const { status } = error.response;
     if (status === 401) {
         Message.error('token失效，请重新登录');
+        // 清除token
         localStorage.removeItem("userToken");
+        // 跳转到登录页面
         router.push('/login')
     }
 
