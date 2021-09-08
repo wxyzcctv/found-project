@@ -7,13 +7,33 @@
 			</el-col>
 			<el-col :span="6" class="user">
 				<div class="userinfor">
-					<img src="../assets/avatar.png" class="avatar" alt="" />
+					<img
+						:src="user.avatar"
+						onerror="javascript:this.src='../assets/avatar.png'"
+						class="avatar"
+						alt=""
+					/>
 					<div class="welcome">
 						<p class="name comename">欢迎</p>
-						<p class="name avatarname">白云苍狗</p>
+						<p class="name avatarname">{{ user.name }}</p>
 					</div>
 					<span class="usernam">
 						<!-- 下拉箭头 -->
+						<el-dropdown trigger="click" @command="setDialogInfo">
+							<span class="el-dropdown-link">
+								<i
+									class="el-icon-arrow-down el-icon--right"
+								></i>
+							</span>
+							<el-dropdown-menu slot="dropdown">
+								<el-dropdown-item command="info"
+									>个人信息</el-dropdown-item
+								>
+								<el-dropdown-item command="logout"
+									>退出</el-dropdown-item
+								>
+							</el-dropdown-menu>
+						</el-dropdown>
 					</span>
 				</div>
 			</el-col>
@@ -23,6 +43,34 @@
 <script>
 export default {
 	name: "head-nav",
+	computed: {
+		user() {
+			return this.$store.getters.user;
+		},
+	},
+	methods: {
+		setDialogInfo(cmdItem) {
+			switch (cmdItem) {
+				case "info":
+					this.showInfoList();
+					break;
+				case "logout":
+					this.logout();
+					break;
+			}
+		},
+		showInfoList() {
+			console.log("个人信息");
+		},
+		logout() {
+			// 清楚token
+			localStorage.removeItem("userToken");
+			// 设置vuex store
+			this.$store.dispatch("clearCurrentState");
+			// 跳转到login界面
+			this.$router.push("/login");
+		},
+	},
 };
 </script>
 
@@ -87,6 +135,9 @@ export default {
 		.username {
 			cursor: pointer;
 			margin-right: 5px;
+		}
+		.el-dropdown {
+			color: #fff;
 		}
 	}
 }
