@@ -9,7 +9,8 @@
 				<div class="userinfor">
 					<img
 						:src="user.avatar"
-						onerror="javascript:this.src='../assets/avatar.png'"
+						ref="imgLabel"
+						@error="imgerrorfun"
 						class="avatar"
 						alt=""
 					/>
@@ -43,12 +44,22 @@
 <script>
 export default {
 	name: "head-nav",
+	data() {
+		return {
+			defaultImg: require("../assets/avatar.png"),
+		};
+	},
 	computed: {
 		user() {
 			return this.$store.getters.user;
 		},
 	},
 	methods: {
+		imgerrorfun() {
+			let img = this.$refs.imgLabel;
+			img.src = this.defaultImg;
+			img.onerror = null; //控制不要一直跳动;
+		},
 		setDialogInfo(cmdItem) {
 			switch (cmdItem) {
 				case "info":
@@ -60,7 +71,7 @@ export default {
 			}
 		},
 		showInfoList() {
-			console.log("个人信息");
+			this.$router.push("/inforshow");
 		},
 		logout() {
 			// 清楚token

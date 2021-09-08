@@ -4,6 +4,8 @@ import Index from "../views/Index.vue"
 import Register from "../views/Register.vue"
 import Login from "../views/Login.vue"
 import NotFound from "../views/404.vue"
+import Home from "../views/Home.vue"
+import inforShow from "../views/inforShow.vue"
 
 Vue.use(VueRouter)
 
@@ -15,7 +17,12 @@ const routes = [
   {
     path: '/index',
     name: 'index',
-    component: Index
+    component: Index,
+    children: [
+      { path: '', component: Home },
+      { path: '/home', name: 'home', component: Home },
+      { path: '/inforshow', name: 'inforshow', component: inforShow },
+    ],
   },
   {
     path: '/register',
