@@ -77,6 +77,7 @@ export default {
 
 <style lang="less">
 .men_page.el-row {
+	z-index: 1;
 	position: fixed;
 	width: 180/15rem;
 	height: calc(100% - 71px);

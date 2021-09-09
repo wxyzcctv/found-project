@@ -5,7 +5,8 @@ import Register from "../views/Register.vue"
 import Login from "../views/Login.vue"
 import NotFound from "../views/404.vue"
 import Home from "../views/Home.vue"
-import inforShow from "../views/inforShow.vue"
+import InforShow from "../views/InforShow.vue"
+import FundList from "../views/FundList.vue"
 
 Vue.use(VueRouter)
 
@@ -21,7 +22,8 @@ const routes = [
     children: [
       { path: '', component: Home },
       { path: '/home', name: 'home', component: Home },
-      { path: '/inforshow', name: 'inforshow', component: inforShow },
+      { path: '/inforshow', name: 'inforshow', component: InforShow },
+      { path: '/fundlist', name: 'fundlist', component: FundList },
     ],
   },
   {
