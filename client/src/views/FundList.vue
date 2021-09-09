@@ -14,6 +14,10 @@
 				label="创建时间"
 				width="250"
 			>
+				<template slot-scope="scope">
+					<i class="el-icon-time"></i>
+					<span style="margin-left: 10px">{{ scope.row.date }}</span>
+				</template>
 			</el-table-column>
 			<el-table-column
 				align="center"
@@ -35,13 +39,19 @@
 				label="收入"
 				width="170"
 			>
+				<template slot-scope="scope">
+					<span style="color: #00d053">{{ scope.row.income }}</span>
+				</template>
 			</el-table-column>
 			<el-table-column
 				align="center"
 				prop="expend"
-				label="之处"
+				label="支出"
 				width="170"
 			>
+				<template slot-scope="scope">
+					<span style="color: #f56767">{{ scope.row.expend }}</span>
+				</template>
 			</el-table-column>
 			<el-table-column
 				align="center"
@@ -49,6 +59,9 @@
 				label="账户现金"
 				width="170"
 			>
+				<template slot-scope="scope">
+					<span style="color: #4db3ff">{{ scope.row.cash }}</span>
+				</template>
 			</el-table-column>
 			<el-table-column
 				align="center"
@@ -56,6 +69,30 @@
 				label="备注"
 				width="220"
 			>
+			</el-table-column>
+			<el-table-column
+				label="操作"
+				prop="operation"
+				align="center"
+				fixed="right"
+				width="320"
+			>
+				<template slot-scope="scope">
+					<el-button
+						type="warning"
+						size="small"
+						icon="el-icon-edit"
+						@click="handleEdit(scope.$index, scope.row)"
+						>编辑
+					</el-button>
+					<el-button
+						size="small"
+						type="danger"
+						icon="el-icon-delete"
+						@click="handleDelete(scope.$index, scope.row)"
+						>删除
+					</el-button>
+				</template>
 			</el-table-column>
 		</el-table>
 	</div>
@@ -83,8 +120,16 @@ export default {
 					console.log(err);
 				});
 		},
+		handleEdit(index, row) {},
+		handleDelete(index, row) {},
 	},
 };
 </script>
 <style lang="less">
+.fund-list-container {
+	width: 100%;
+	height: 100%;
+	padding: 16px;
+	box-sizing: border-box;
+}
 </style>
