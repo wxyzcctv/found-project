@@ -121,6 +121,23 @@
 				</el-table-column>
 			</el-table>
 		</div>
+		<!-- 分页 -->
+		<el-row>
+			<el-col :span="24">
+				<div class="pagination">
+					<el-pagination
+						@size-change="handleSizeChange"
+						@current-change="handleCurrentChange"
+						:current-page.sync="paginations.page_index"
+						:page-sizes="paginations.page_sizes"
+						:page-size="paginations.page_size"
+						:layout="paginations.layout"
+						:total="paginations.total"
+					>
+					</el-pagination>
+				</div>
+			</el-col>
+		</el-row>
 		<Dialog
 			:dialog="dialogData"
 			:formData="formData"
@@ -151,6 +168,13 @@ export default {
 				cash: "",
 				remark: "",
 				id: "",
+			},
+			paginations: {
+				page_index: 1, //当前所在页
+				total: 0, // 总数
+				page_size: 5, // 一页显示条数
+				page_sizes: [5, 10, 15, 20], // 每页显示条数
+				layout: "total, sizes, prev, pager, next, jumper", // 分页属性
 			},
 		};
 	},
@@ -213,6 +237,8 @@ export default {
 				id: "",
 			};
 		},
+		handleSizeChange() {},
+		handleCurrentChange() {},
 	},
 };
 </script>
@@ -225,5 +251,9 @@ export default {
 }
 .btnRight {
 	float: right;
+}
+.pagination {
+	text-align: right;
+	margin-top: 10px;
 }
 </style>
