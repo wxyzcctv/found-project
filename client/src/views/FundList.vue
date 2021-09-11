@@ -155,6 +155,7 @@ export default {
 	data() {
 		return {
 			tableData: [],
+			allTableData: [],
 			dialogData: {
 				show: false,
 				title: "添加资金信息",
@@ -187,7 +188,9 @@ export default {
 			this.$axios
 				.get("/api/profiles")
 				.then((res) => {
-					this.tableData = res.data;
+					this.allTableData = res.data;
+					// 设置分页数据
+					this.setPaginations();
 				})
 				.catch((err) => {
 					console.log(err);
@@ -237,8 +240,35 @@ export default {
 				id: "",
 			};
 		},
-		handleSizeChange() {},
-		handleCurrentChange() {},
+		setPaginations() {
+			this.paginations.total = this.allTableData.length;
+			this.paginations.page_index = 1;
+			this.paginations.page_size = 5;
+			this.tableData = this.allTableData.filter((item, index) => {
+				return index < this.paginations.page_size;
+			});
+		},
+		handleSizeChange(page_size) {
+			this.paginations.page_index = 1;
+			this.paginations.page_size = page_size;
+			this.tableData = this.allTableData.filter((item, index) => {
+				return index < this.paginations.page_size;
+			});
+		},
+		handleCurrentChange(page) {
+            // 获取当前页的在总数组中的起始index
+			let startIndex = this.paginations.page_size * (page - 1);
+            // 获取当前页的在总数组中的结束index
+			let endIndex = this.paginations.page_size * page;
+			let table = [];
+			for (let i = startIndex; i < endIndex; i++) {
+                // 只有当当前index的数据存在与总数据中时才放入数据
+				if (this.allTableData[i]) {
+					table.push(this.allTableData[i]);
+				}
+			}
+			this.tableData = table;
+		},
 	},
 };
 </script>
