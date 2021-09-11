@@ -121,7 +121,7 @@
 				</el-table-column>
 			</el-table>
 		</div>
-		<Dialog :dialog="dialogData"></Dialog>
+		<Dialog :dialog="dialogData" @updataDialog="getProfile"></Dialog>
 	</div>
 </template>
 <script>
