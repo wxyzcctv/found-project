@@ -1,7 +1,7 @@
 <template>
 	<div class="dialog">
 		<el-dialog
-			title="添加资金信息"
+			:title="dialog.title"
 			:visible.sync="dialog.show"
 			:close-on-click-modal="false"
 			:modal-append-to-body="false"
@@ -62,14 +62,6 @@ export default {
 	name: "dialog",
 	data() {
 		return {
-			formData: {
-				type: "",
-				describe: "",
-				income: "",
-				expend: "",
-				cash: "",
-				remark: "",
-			},
 			format_type_list: [
 				"提现",
 				"提现手续费",
@@ -100,13 +92,18 @@ export default {
 	},
 	props: {
 		dialog: Object,
+		formData: Object,
 	},
 	methods: {
 		submitForm() {
 			this.$refs.form.validate((valid) => {
 				if (valid) {
+					const url =
+						this.dialog.options === "add"
+							? "add"
+							: `edit/${this.formData.id}`;
 					this.$axios
-						.post("/api/profiles/add", this.formData)
+						.post(`/api/profiles/${url}`, this.formData)
 						.then((res) => {
 							// 添加成功
 							this.$message.success("数据添加成功");

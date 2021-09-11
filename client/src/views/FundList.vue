@@ -121,7 +121,11 @@
 				</el-table-column>
 			</el-table>
 		</div>
-		<Dialog :dialog="dialogData" @updataDialog="getProfile"></Dialog>
+		<Dialog
+			:dialog="dialogData"
+			:formData="formData"
+			@updataDialog="getProfile"
+		></Dialog>
 	</div>
 </template>
 <script>
@@ -136,6 +140,17 @@ export default {
 			tableData: [],
 			dialogData: {
 				show: false,
+				title: "添加资金信息",
+				options: "add",
+			},
+			formData: {
+				type: "",
+				describe: "",
+				income: "",
+				expend: "",
+				cash: "",
+				remark: "",
+				id: "",
 			},
 		};
 	},
@@ -154,10 +169,49 @@ export default {
 					console.log(err);
 				});
 		},
-		handleEdit(index, row) {},
-		handleDelete(index, row) {},
+		handleEdit(index, row) {
+			// 编辑
+			this.dialogData = {
+				show: true,
+				title: "编辑资金信息",
+				options: "edit",
+			};
+
+			this.formData = {
+				type: row.type,
+				describe: row.describe,
+				income: row.income,
+				expend: row.expend,
+				cash: row.cash,
+				remark: row.remark,
+				id: row._id,
+			};
+		},
+		handleDelete(index, row) {
+			this.$axios
+				.delete(`/api/profiles/delete/${row._id}`)
+				.then((res) => {
+					// 删除成功
+					this.$message.success("删除成功");
+					this.getProfile();
+				});
+		},
 		handleAdd() {
-			this.dialogData.show = true;
+			// 新增
+			this.dialogData = {
+				show: true,
+				title: "添加资金信息",
+				options: "add",
+			};
+			this.formData = {
+				type: "",
+				describe: "",
+				income: "",
+				expend: "",
+				cash: "",
+				remark: "",
+				id: "",
+			};
 		},
 	},
 };
