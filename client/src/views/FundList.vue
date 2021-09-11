@@ -1,13 +1,36 @@
 <template>
 	<div class="fund-list-container">
 		<div>
-			<el-form :inline="true" ref="add_data">
+			<el-form :inline="true" ref="add_data" v-model="search_data">
+				<el-form-item label="筛选时间：">
+					<el-date-picker
+						v-model="search_data.startTime"
+						type="datetime"
+						placeholder="选择开始时间"
+					>
+					</el-date-picker>
+					--
+					<el-date-picker
+						v-model="search_data.endTime"
+						type="datetime"
+						placeholder="选择结束时间"
+					>
+					</el-date-picker>
+				</el-form-item>
+				<el-form-item>
+					<el-button
+						type="primary"
+						icon="el-icon-search"
+						@click="handleSearch()"
+						>筛选</el-button
+					>
+				</el-form-item>
 				<el-form-item class="btnRight">
 					<el-button
 						type="primary"
-						size="small"
 						icon="el-icon-plus"
 						@click="handleAdd()"
+                        v-if="user.identity === 'manager'"
 						>添加</el-button
 					>
 				</el-form-item>
@@ -101,6 +124,7 @@
 					align="center"
 					fixed="right"
 					width="320"
+                    v-if="user.identity === 'manager'"
 				>
 					<template slot-scope="scope">
 						<el-button
@@ -152,9 +176,19 @@ export default {
 	components: {
 		Dialog,
 	},
+    computed: {
+        user(){
+            return this.$store.getters.user;
+        }
+    },
 	data() {
 		return {
+			search_data: {
+				startTime: "",
+				endTime: "",
+			},
 			tableData: [],
+			searchTableData: [],
 			allTableData: [],
 			dialogData: {
 				show: false,
@@ -189,6 +223,7 @@ export default {
 				.get("/api/profiles")
 				.then((res) => {
 					this.allTableData = res.data;
+					this.searchTableData = res.data;
 					// 设置分页数据
 					this.setPaginations();
 				})
@@ -256,18 +291,34 @@ export default {
 			});
 		},
 		handleCurrentChange(page) {
-            // 获取当前页的在总数组中的起始index
+			// 获取当前页的在总数组中的起始index
 			let startIndex = this.paginations.page_size * (page - 1);
-            // 获取当前页的在总数组中的结束index
+			// 获取当前页的在总数组中的结束index
 			let endIndex = this.paginations.page_size * page;
 			let table = [];
 			for (let i = startIndex; i < endIndex; i++) {
-                // 只有当当前index的数据存在与总数据中时才放入数据
+				// 只有当当前index的数据存在与总数据中时才放入数据
 				if (this.allTableData[i]) {
 					table.push(this.allTableData[i]);
 				}
 			}
 			this.tableData = table;
+		},
+		handleSearch() {
+			let startTime = this.search_data.startTime.getTime();
+			let endTime = this.search_data.endTime.getTime();
+			if (!startTime || !endTime) {
+				this.$message.warning("请选择筛选时间区间");
+				this.getProfile();
+				return;
+			}
+
+			this.allTableData = this.searchTableData.filter((item, index) => {
+				let time = new Date(item.date).getTime();
+				return time >= startTime && time <= endTime;
+			});
+
+			this.setPaginations();
 		},
 	},
 };
